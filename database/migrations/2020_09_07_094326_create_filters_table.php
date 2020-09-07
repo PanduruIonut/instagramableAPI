@@ -16,6 +16,7 @@ class CreateFiltersTable extends Migration
         Schema::create('filters', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('name');
         });
     }
 
