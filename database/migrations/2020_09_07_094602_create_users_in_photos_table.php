@@ -16,6 +16,8 @@ class CreateUsersInPhotosTable extends Migration
         Schema::create('users_in_photos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('x_coord');
+            $table->string('y_coord');
         });
     }
 
