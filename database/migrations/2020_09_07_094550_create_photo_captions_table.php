@@ -16,6 +16,7 @@ class CreatePhotoCaptionsTable extends Migration
         Schema::create('photo_captions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('text');
         });
     }
 
