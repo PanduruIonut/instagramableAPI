@@ -20,6 +20,7 @@ class CreatePhotosTable extends Migration
             $table->text('long');
             $table->text('filter');
             $table->text('link');
+            $table->timestamps();
         });
     }
 

@@ -2,6 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Comment;
+use App\Filters;
+use App\LikedPhotos;
+use App\Photo;
+use App\PhotoCaption;
+use App\Tags;
+use App\User;
+use App\UsersInPhoto;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -34,14 +42,13 @@ class import extends Command
     public function insertComments(array $req)
     {
         if (!empty($req['comments']->data)) {
-            $created_datetime = $req['created_time'];
-            $photo_id = $req['id'];
-
             foreach ($req['comments']->data as $comment) {
-                $user_id = $comment->from->id;
-                $text = $comment->text;
-                $data = array('created_time' => $created_datetime, 'user_id' => $user_id, 'photo_id' => $photo_id, 'text' => $text);
-                DB::table('comments')->insert($data);
+                $newComment = new Comment();
+                $newComment->created_time = $req['created_time'];
+                $newComment->user_id = $comment->from->id;
+                $newComment->photo_id = $req['id'];
+                $newComment->text = $comment->text;
+                $newComment->save();
             }
         }
     }
@@ -49,12 +56,11 @@ class import extends Command
     public function insertTags(array $req)
     {
         if (!empty($req['tags'])) {
-            $photo_id = $req['id'];
-
             foreach ($req['tags'] as $tag) {
-                $name = $tag;
-                $data = array('photo_id' => $photo_id, 'name' => $name);
-                DB::table('tags')->insert($data);
+                $newTag = new Tags();
+                $newTag->photo_id = $req['id'];
+                $newTag->name = $tag;
+                $newTag->save();
             }
         }
     }
@@ -62,40 +68,42 @@ class import extends Command
     public function insertUsers(array $req)
     {
         if (!empty($req['user'])) {
-            $id = $req['user']->id;
-            $username = $req['user']->username;
-            $website = $req['user']->website;
-            $bio = $req['user']->bio;
-            $profilePicture = $req['user']->profile_picture;
-            $fullName = $req['user']->full_name;
-            $data = array('id' => $id, 'username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
-            DB::table('users')->updateOrInsert($data);
+            $newUser = new User();
+            $newUser->id = $req['user']->id;
+            $newUser->username = $req['user']->username;
+            $newUser->website = $req['user']->website;
+            $newUser->bio = $req['user']->bio;
+            $newUser->profile_picture = $req['user']->profile_picture;
+            $newUser->full_name = $req['user']->full_name;
+            $newUser->save();
         }
 
         if (!empty($req['comments']->data)) {
             foreach ($req['comments']->data as $comment) {
-                $user = $comment->from;
-                $id = $user->id;
-                $username = $user->username;
-                $profilePicture = $user->profile_picture;
-                $fullName = $user->full_name;
-                $website = '';
-                $bio = '';
-                $data = array('id' => $id, 'username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
-                DB::table('users')->updateOrInsert($data);
+                $existingUser = User::find($comment->from->id);
+                if (!$existingUser) {
+                    $user = $comment->from;
+                    $newUser = new User();
+                    $newUser->id = $user->id;
+                    $newUser->username = $user->username;
+                    $newUser->profile_picture = $user->profile_picture;
+                    $newUser->full_name = $user->full_name;
+                    $newUser->save();
+                }
             }
         }
 
         if (!empty($req['likes']->data)) {
             foreach ($req['likes']->data as $user) {
-                $id = $user->id;
-                $username = $user->username;
-                $profilePicture = $user->profile_picture;
-                $fullName = $user->full_name;
-                $website = '';
-                $bio = '';
-                $data = array('id' => $id, 'username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
-                DB::table('users')->updateOrInsert($data);
+                $existingUser = User::find($user->id);
+                if (!$existingUser) {
+                    $newUser = new User();
+                    $newUser->id = $user->id;
+                    $newUser->username = $user->username;
+                    $newUser->profile_picture = $user->profile_picture;
+                    $newUser->full_name = $user->full_name;
+                    $newUser->save();
+                }
             }
         }
     }
@@ -103,35 +111,34 @@ class import extends Command
     public function insertCaptions(array $req)
     {
         if (!empty($req['caption'])) {
-            $id = $req['caption']->id;
-            $text = $req['caption']->text;
-            $photo_id = $req['id'];
-            $user_id = $req['caption']->from->id;
-            $data = array('id' => $id, 'text' => $text, 'photo_id' => $photo_id, 'user_id' => $user_id);
-            DB::table('photo_captions')->insert($data);
+            $newCaption = new PhotoCaption();
+            $newCaption->id = $req['caption']->id;
+            $newCaption->text = $req['caption']->text;
+            $newCaption->photo_id = $req['id'];
+            $newCaption->user_id = $req['caption']->from->id;
+            $newCaption->save();
         }
     }
 
     public function insertFilters(array $req)
     {
         if (!empty($req['filter'])) {
-            $name = $req['filter'];
-            $data = array('name' => $name);
-            DB::table('filters')->updateOrInsert($data);
+            $newFilter = new Filters();
+            $newFilter->name = $req['filter'];
+            $newFilter->save();
         }
     }
 
     public function insertUsersInPhoto(array $req)
     {
         if (!empty($req['users_in_photo'])) {
-            $photo_id = $req['id'];
-
             foreach ($req['users_in_photo'] as $userInPhoto) {
-                $x_coord = $userInPhoto->position->x;
-                $y_coord = $userInPhoto->position->y;
-                $user_id = $userInPhoto->user->id;
-                $data = array('x_coord' => $x_coord, 'y_coord' => $y_coord, 'user_id' => $user_id, 'photo_id' => $photo_id);
-                DB::table('users_in_photos')->insert($data);
+                $newUserInPhoto = new UsersInPhoto();
+                $newUserInPhoto->x_coord = $userInPhoto->position->x;
+                $newUserInPhoto->y_coord = $userInPhoto->position->y;
+                $newUserInPhoto->user_id = $userInPhoto->user->id;
+                $newUserInPhoto->photo_id = $req['id'];
+                $newUserInPhoto->save();
             }
         }
     }
@@ -139,12 +146,11 @@ class import extends Command
     public function insertLikedPhotos(array $req)
     {
         if (!empty($req['likes'])) {
-            $photo_id = $req['id'];
-
             foreach ($req['likes']->data as $likes) {
-                $user_id = $likes->id;
-                $data = array('user_id' => $user_id, 'photo_id' => $photo_id);
-                DB::table('liked_photos')->insert($data);
+                $newLike = new LikedPhotos();
+                $newLike->user_id = $likes->id;
+                $newLike->photo_id = $req['id'];
+                $newLike->save();
             }
         }
     }
@@ -152,15 +158,14 @@ class import extends Command
     public function insertPhotos(array $req)
     {
         if (!empty($req)) {
-            $id = $req['id'];
-            $created_time = $req['created_time'];
-            $latitude = $req['location']->latitude;
-            $longitude = $req['location']->longitude;
-            $longitude = $req['location']->longitude;
-            $link = $req['link'];
-            $filter = DB::table('filters')->where('name', $req['filter'])->value('id');
-            $data = array('id' => $id, 'created_time' => $created_time, 'lat' => $latitude, 'long' => $longitude, 'filter' => $filter, 'link' => $link);
-            DB::table('photos')->insert($data);
+            $newPhoto = new Photo();
+            $newPhoto->id = $req['id'];
+            $newPhoto->created_time = $req['created_time'];
+            $newPhoto->lat = $req['location']->latitude;
+            $newPhoto->long = $req['location']->longitude;
+            $newPhoto->filter = Filters::where('name', $req['filter'])->value('id');
+            $newPhoto->link = $req['link'];
+            $newPhoto->save();
         }
     }
 
