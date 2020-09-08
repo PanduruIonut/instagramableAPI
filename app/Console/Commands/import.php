@@ -47,6 +47,20 @@ class import extends Command
         }
     }
 
+    public function insertTags(array $req)
+    {
+        print_r($req);
+        if (!empty($req['tags'])) {
+            $photo_id = $req['id'];
+
+            foreach ($req['tags'] as $tag) {
+                $name = $tag;
+                $data = array('photo_id' => $photo_id, 'name' => $name);
+                DB::table('tags')->insert($data);
+            }
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -72,6 +86,7 @@ class import extends Command
             $post_data['id'] = $post->id;
             $post_data['user'] = $post->user;
             $this->insertComments($post_data);
+            $this->insertTags($post_data);
             $all_post_here[] =  $post_data;
         }
 
