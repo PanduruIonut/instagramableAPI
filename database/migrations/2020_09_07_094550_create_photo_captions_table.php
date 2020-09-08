@@ -17,8 +17,8 @@ class CreatePhotoCaptionsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->text('text');
-            $table->unsignedBigInteger('photo_id');
-            $table->unsignedBigInteger('user_id');
+            $table->string('photo_id');
+            $table->foreignId('user_id');
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('photo_id')->references('id')->on('photos');

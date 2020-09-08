@@ -17,7 +17,7 @@ class CreateUsersInPhotosTable extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('photo_id');
+            $table->string('photo_id');
             $table->text('x_coord');
             $table->text('y_coord');
 
