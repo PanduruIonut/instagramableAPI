@@ -16,6 +16,8 @@ class CreateLikedPhotosTable extends Migration
         Schema::create('liked_photos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->text('user_id');
+            $table->text('photo_id');
         });
     }
 

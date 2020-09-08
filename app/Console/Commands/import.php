@@ -110,6 +110,19 @@ class import extends Command
         }
     }
 
+    public function insertLikedPhotos(array $req)
+    {
+        if (!empty($req['likes'])) {
+            $photo_id = $req['id'];
+
+            foreach ($req['likes']->data as $likes) {
+                $user_id = $likes->id;
+                $data = array('user_id' => $user_id, 'photo_id' => $photo_id);
+                DB::table('liked_photos')->insert($data);
+            }
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -134,12 +147,15 @@ class import extends Command
             $post_data['type'] = $post->type;
             $post_data['id'] = $post->id;
             $post_data['user'] = $post->user;
+
             $this->insertCaptions($post_data);
             $this->insertComments($post_data);
             $this->insertUsers($post_data);
             $this->insertTags($post_data);
             $this->insertFilters($post_data);
             $this->insertUsersInPhoto($post_data);
+            $this->insertLikedPhotos($post_data);
+
             $all_post_here[] =  $post_data;
         }
 
