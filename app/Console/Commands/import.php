@@ -117,10 +117,9 @@ class import extends Command
     public function insertFilters(array $req)
     {
         if (!empty($req['filter'])) {
-            $photo_id = $req['id'];
             $name = $req['filter'];
-            $data = array('name' => $name, 'photo_id' => $photo_id);
-            DB::table('filters')->insert($data);
+            $data = array('name' => $name);
+            DB::table('filters')->updateOrInsert($data);
         }
     }
 
