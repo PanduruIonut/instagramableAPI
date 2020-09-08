@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\User;
 use Illuminate\Console\Command;
 use DateTime;
 use Illuminate\Support\Facades\DB;
@@ -63,13 +64,41 @@ class import extends Command
     public function insertUsers(array $req)
     {
         if (!empty($req['user'])) {
+            $id = $req['user']->id;
             $username = $req['user']->username;
             $website = $req['user']->website;
             $bio = $req['user']->bio;
             $profilePicture = $req['user']->profile_picture;
             $fullName = $req['user']->full_name;
-            $data = array('username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
-            DB::table('users')->insert($data);
+            $data = array('id' => $id, 'username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
+            DB::table('users')->updateOrInsert($data);
+        }
+
+        if (!empty($req['comments']->data)) {
+            foreach ($req['comments']->data as $comment) {
+                $user = $comment->from;
+                $id = $user->id;
+                $username = $user->username;
+                $profilePicture = $user->profile_picture;
+                $fullName = $user->full_name;
+                $website = '';
+                $bio = '';
+                $data = array('id' => $id, 'username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
+                DB::table('users')->updateOrInsert($data);
+            }
+        }
+
+        if (!empty($req['likes']->data)) {
+            foreach ($req['likes']->data as $user) {
+                $id = $user->id;
+                $username = $user->username;
+                $profilePicture = $user->profile_picture;
+                $fullName = $user->full_name;
+                $website = '';
+                $bio = '';
+                $data = array('id' => $id, 'username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
+                DB::table('users')->updateOrInsert($data);
+            }
         }
     }
 
@@ -148,6 +177,14 @@ class import extends Command
         $content = file_get_contents('https://raw.githubusercontent.com/robynitp/networkedmedia/master/week5/00-json/instagram.json');
         $obj = json_decode($content);
         $all_post_here  = [];
+        foreach ($obj->data as $post) {
+            $post_data['likes'] = $post->likes;
+            $post_data['user'] = $post->user;
+            $post_data['comments'] = $post->comments;
+            $post_data['filter'] = $post->filter;
+            $this->insertUsers($post_data);
+            $this->insertFilters($post_data);
+        }
         foreach ($obj->data as $post) {
             $post_data['tags'] = $post->tags;
             $post_data['location'] = $post->location;
