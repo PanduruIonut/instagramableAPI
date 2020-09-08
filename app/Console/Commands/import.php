@@ -73,6 +73,18 @@ class import extends Command
         }
     }
 
+    public function insertCaptions(array $req)
+    {
+        if (!empty($req['caption'])) {
+            $id = $req['caption']->id;
+            $text = $req['caption']->text;
+            $photo_id = $req['id'];
+            $user_id = $req['caption']->from->id;
+            $data = array('id' => $id, 'text' => $text, 'photo_id' => $photo_id, 'user_id' => $user_id);
+            DB::table('photo_captions')->insert($data);
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -97,6 +109,7 @@ class import extends Command
             $post_data['type'] = $post->type;
             $post_data['id'] = $post->id;
             $post_data['user'] = $post->user;
+            $this->insertCaptions($post_data);
             $this->insertComments($post_data);
             $this->insertUsers($post_data);
             $this->insertTags($post_data);
