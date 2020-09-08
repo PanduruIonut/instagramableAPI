@@ -123,6 +123,21 @@ class import extends Command
         }
     }
 
+    public function insertPhotos(array $req)
+    {
+        if (!empty($req)) {
+            $id = $req['id'];
+            $created_time = $req['created_time'];
+            $latitude = $req['location']->latitude;
+            $longitude = $req['location']->longitude;
+            $longitude = $req['location']->longitude;
+            $link = $req['link'];
+            $filter = DB::table('filters')->where('name', $req['filter'])->value('id');
+            $data = array('id' => $id, 'created_time' => $created_time, 'lat' => $latitude, 'long' => $longitude, 'filter' => $filter, 'link' => $link);
+            DB::table('photos')->insert($data);
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -148,11 +163,10 @@ class import extends Command
             $post_data['id'] = $post->id;
             $post_data['user'] = $post->user;
 
+            $this->insertPhotos($post_data);
             $this->insertCaptions($post_data);
             $this->insertComments($post_data);
-            $this->insertUsers($post_data);
             $this->insertTags($post_data);
-            $this->insertFilters($post_data);
             $this->insertUsersInPhoto($post_data);
             $this->insertLikedPhotos($post_data);
 
