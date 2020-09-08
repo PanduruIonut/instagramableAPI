@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\User;
 use Illuminate\Console\Command;
-use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class import extends Command
