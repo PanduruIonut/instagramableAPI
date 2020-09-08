@@ -17,7 +17,9 @@ class CreateTagsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->string('photo_id');
+            $table->unsignedBigInteger('photo_id');
+
+            $table->foreign('photo_id')->references('id')->on('photos');
         });
     }
 

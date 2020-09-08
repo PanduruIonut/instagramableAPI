@@ -16,10 +16,13 @@ class CreateUsersInPhotosTable extends Migration
         Schema::create('users_in_photos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('photo_id');
             $table->text('x_coord');
             $table->text('y_coord');
-            $table->text('user_id');
-            $table->text('photo_id');
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('photo_id')->references('id')->on('photos');
         });
     }
 

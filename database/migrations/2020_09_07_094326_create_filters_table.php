@@ -17,7 +17,9 @@ class CreateFiltersTable extends Migration
             $table->id();
             $table->timestamps();
             $table->text('name');
-            $table->text('photo_id');
+            $table->unsignedBigInteger('photo_id');
+
+            $table->foreign('photo_id')->references('id')->on('photos');
         });
     }
 
