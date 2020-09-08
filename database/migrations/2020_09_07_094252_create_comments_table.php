@@ -16,9 +16,10 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('userId');
-            $table->string('photoId');
-            $table->string('text');
+            $table->string('user_id');
+            $table->string('photo_id');
+            $table->text('text');
+            $table->string('created_time');
         });
     }
 

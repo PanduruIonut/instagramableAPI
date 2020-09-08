@@ -17,6 +17,7 @@ class CreatePhotoCaptionsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('text');
+            $table->unsignedBigInteger('photo_id');
         });
     }
 
