@@ -85,6 +85,16 @@ class import extends Command
         }
     }
 
+    public function insertFilters(array $req)
+    {
+        if (!empty($req['filter'])) {
+            $photo_id = $req['id'];
+            $name = $req['filter'];
+            $data = array('name' => $name, 'photo_id' => $photo_id);
+            DB::table('filters')->insert($data);
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -113,6 +123,7 @@ class import extends Command
             $this->insertComments($post_data);
             $this->insertUsers($post_data);
             $this->insertTags($post_data);
+            $this->insertFilters($post_data);
             $all_post_here[] =  $post_data;
         }
 
