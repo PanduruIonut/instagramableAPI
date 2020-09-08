@@ -49,7 +49,6 @@ class import extends Command
 
     public function insertTags(array $req)
     {
-        print_r($req);
         if (!empty($req['tags'])) {
             $photo_id = $req['id'];
 
@@ -58,6 +57,19 @@ class import extends Command
                 $data = array('photo_id' => $photo_id, 'name' => $name);
                 DB::table('tags')->insert($data);
             }
+        }
+    }
+
+    public function insertUsers(array $req)
+    {
+        if (!empty($req['user'])) {
+            $username = $req['user']->username;
+            $website = $req['user']->website;
+            $bio = $req['user']->bio;
+            $profilePicture = $req['user']->profile_picture;
+            $fullName = $req['user']->full_name;
+            $data = array('username' => $username, 'website' => $website, 'bio' => $bio, 'profile_picture' => $profilePicture, 'full_name' => $fullName);
+            DB::table('users')->insert($data);
         }
     }
 
@@ -86,6 +98,7 @@ class import extends Command
             $post_data['id'] = $post->id;
             $post_data['user'] = $post->user;
             $this->insertComments($post_data);
+            $this->insertUsers($post_data);
             $this->insertTags($post_data);
             $all_post_here[] =  $post_data;
         }
