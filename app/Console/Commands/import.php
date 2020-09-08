@@ -95,6 +95,21 @@ class import extends Command
         }
     }
 
+    public function insertUsersInPhoto(array $req)
+    {
+        if (!empty($req['users_in_photo'])) {
+            $photo_id = $req['id'];
+
+            foreach ($req['users_in_photo'] as $userInPhoto) {
+                $x_coord = $userInPhoto->position->x;
+                $y_coord = $userInPhoto->position->y;
+                $user_id = $userInPhoto->user->id;
+                $data = array('x_coord' => $x_coord, 'y_coord' => $y_coord, 'user_id' => $user_id, 'photo_id' => $photo_id);
+                DB::table('users_in_photos')->insert($data);
+            }
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -124,6 +139,7 @@ class import extends Command
             $this->insertUsers($post_data);
             $this->insertTags($post_data);
             $this->insertFilters($post_data);
+            $this->insertUsersInPhoto($post_data);
             $all_post_here[] =  $post_data;
         }
 
