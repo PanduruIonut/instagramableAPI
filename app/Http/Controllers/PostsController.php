@@ -8,7 +8,17 @@ class PostsController extends Controller
 {
     public function index()
     {
+        $photos = Photo::all();
+        foreach ($photos as $photo) {
+            $photo['likes'] = $photo->likes;
+            $photo['comments'] = $photo->comments;
+            $photo['tags'] = $photo->tags;
+            $photo['users_in_photo'] = $photo->usersInPhoto;
+            $photo['photo_caption'] = $photo->photoCaption;
+        }
 
-        return Photo::with('likes', 'comments', 'photoCaption', 'tags', 'usersInPhoto')->get();
+        return response()->json([
+            'photos'    => $photos,
+        ]);
     }
 }
