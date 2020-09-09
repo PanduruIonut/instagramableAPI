@@ -49,6 +49,7 @@ class import extends Command
                 $newComment->photo_id = $req['id'];
                 $newComment->text = $comment->text;
                 $newComment->save();
+                Photo::find($newComment->photo_id)->comments->add($newComment);
             }
         }
     }
@@ -61,6 +62,7 @@ class import extends Command
                 $newTag->photo_id = $req['id'];
                 $newTag->name = $tag;
                 $newTag->save();
+                Photo::find($newTag->photo_id)->tags->add($newTag);
             }
         }
     }
@@ -117,6 +119,7 @@ class import extends Command
             $newCaption->photo_id = $req['id'];
             $newCaption->user_id = $req['caption']->from->id;
             $newCaption->save();
+            Photo::find($newCaption->photo_id)->photoCaption = $newCaption;
         }
     }
 
@@ -139,6 +142,7 @@ class import extends Command
                 $newUserInPhoto->user_id = $userInPhoto->user->id;
                 $newUserInPhoto->photo_id = $req['id'];
                 $newUserInPhoto->save();
+                Photo::find($newUserInPhoto->photo_id)->usersInPhoto->add($newUserInPhoto);
             }
         }
     }
@@ -151,6 +155,7 @@ class import extends Command
                 $newLike->user_id = $likes->id;
                 $newLike->photo_id = $req['id'];
                 $newLike->save();
+                Photo::find($newLike->photo_id)->likes->add($newLike);
             }
         }
     }
@@ -183,16 +188,18 @@ class import extends Command
             $post_data['likes'] = $post->likes;
             $post_data['user'] = $post->user;
             $post_data['comments'] = $post->comments;
+            $post_data['location'] = $post->location;
             $post_data['filter'] = $post->filter;
-            $this->insertUsers($post_data);
+            $post_data['link'] = $post->link;
+            $post_data['id'] = $post->id;
+            $post_data['created_time'] = $post->created_time;
             $this->insertFilters($post_data);
+            $this->insertPhotos($post_data);
+            $this->insertUsers($post_data);
         }
         foreach ($obj->data as $post) {
             $post_data['tags'] = $post->tags;
-            $post_data['location'] = $post->location;
             $post_data['comments'] = $post->comments;
-            $post_data['filter'] = $post->filter;
-            $post_data['created_time'] = $post->created_time;
             $post_data['link'] = $post->link;
             $post_data['likes'] = $post->likes;
             $post_data['images'] = $post->images;
@@ -202,7 +209,6 @@ class import extends Command
             $post_data['id'] = $post->id;
             $post_data['user'] = $post->user;
 
-            $this->insertPhotos($post_data);
             $this->insertCaptions($post_data);
             $this->insertComments($post_data);
             $this->insertTags($post_data);
