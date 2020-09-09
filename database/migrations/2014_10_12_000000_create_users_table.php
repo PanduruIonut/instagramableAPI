@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('full_name');
             $table->string('bio')->nullable();
             $table->string('website')->nullable();
+            $table->string('photo_id');
             $table->timestamps();
         });
     }

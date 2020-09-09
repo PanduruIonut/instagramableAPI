@@ -15,6 +15,7 @@ class PostsController extends Controller
             $photo['tags'] = $photo->tags;
             $photo['users_in_photo'] = $photo->usersInPhoto;
             $photo['photo_caption'] = $photo->photoCaption;
+            $photo['users'] = $photo->user;
         }
 
         return response()->json([

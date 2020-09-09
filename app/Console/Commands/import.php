@@ -72,6 +72,7 @@ class import extends Command
         if (!empty($req['user'])) {
             $newUser = new User();
             $newUser->id = $req['user']->id;
+            $newUser->photo_id = $req['id'];
             $newUser->username = $req['user']->username;
             $newUser->website = $req['user']->website;
             $newUser->bio = $req['user']->bio;
@@ -86,6 +87,7 @@ class import extends Command
                 if (!$existingUser) {
                     $user = $comment->from;
                     $newUser = new User();
+                    $newUser->photo_id = $req['id'];
                     $newUser->id = $user->id;
                     $newUser->username = $user->username;
                     $newUser->profile_picture = $user->profile_picture;
@@ -101,6 +103,7 @@ class import extends Command
                 if (!$existingUser) {
                     $newUser = new User();
                     $newUser->id = $user->id;
+                    $newUser->photo_id = $req['id'];
                     $newUser->username = $user->username;
                     $newUser->profile_picture = $user->profile_picture;
                     $newUser->full_name = $user->full_name;

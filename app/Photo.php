@@ -35,4 +35,9 @@ class Photo extends Model
     {
         return $this->hasMany('App\UsersInPhoto');
     }
+
+    public function user()
+    {
+        return $this->hasOne('App\User');
+    }
 }
