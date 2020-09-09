@@ -169,6 +169,15 @@ class import extends Command
             $newPhoto->lat = $req['location']->latitude;
             $newPhoto->long = $req['location']->longitude;
             $newPhoto->filter = Filters::where('name', $req['filter'])->value('id');
+            $newPhoto->low_resolution_url = $req['images']->low_resolution->url;
+            $newPhoto->low_resolution_width = $req['images']->low_resolution->width;
+            $newPhoto->low_resolution_height = $req['images']->low_resolution->height;
+            $newPhoto->thumbnail_url = $req['images']->thumbnail->url;
+            $newPhoto->thumbnail_width = $req['images']->thumbnail->width;
+            $newPhoto->thumbnail_height = $req['images']->thumbnail->height;
+            $newPhoto->standard_resolution_url = $req['images']->standard_resolution->url;
+            $newPhoto->standard_resolution_width = $req['images']->standard_resolution->width;
+            $newPhoto->standard_resolution_height = $req['images']->standard_resolution->height;
             $newPhoto->link = $req['link'];
             $newPhoto->save();
         }
@@ -193,6 +202,7 @@ class import extends Command
             $post_data['link'] = $post->link;
             $post_data['id'] = $post->id;
             $post_data['created_time'] = $post->created_time;
+            $post_data['images'] = $post->images;
             $this->insertFilters($post_data);
             $this->insertPhotos($post_data);
             $this->insertUsers($post_data);
@@ -202,7 +212,6 @@ class import extends Command
             $post_data['comments'] = $post->comments;
             $post_data['link'] = $post->link;
             $post_data['likes'] = $post->likes;
-            $post_data['images'] = $post->images;
             $post_data['users_in_photo'] = $post->users_in_photo;
             $post_data['caption'] = $post->caption;
             $post_data['type'] = $post->type;

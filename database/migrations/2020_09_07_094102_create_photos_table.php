@@ -20,6 +20,15 @@ class CreatePhotosTable extends Migration
             $table->text('long');
             $table->text('filter');
             $table->text('link');
+            $table->text('low_resolution_url');
+            $table->text('low_resolution_width');
+            $table->text('low_resolution_height');
+            $table->text('thumbnail_url');
+            $table->text('thumbnail_width');
+            $table->text('thumbnail_height');
+            $table->text('standard_resolution_url');
+            $table->text('standard_resolution_width');
+            $table->text('standard_resolution_height');
             $table->timestamps();
         });
     }
